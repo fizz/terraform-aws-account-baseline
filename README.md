@@ -76,7 +76,7 @@ Config, GuardDuty, Security Hub and Inspector bill by usage, and the conformance
 
 ## Notes
 
-- Tested on AWS provider 5.100 and 6.0, with `terraform test` and a mocked provider, so the tests need no credentials. It has been planned against a live account and not yet applied to one. Apply it to a test account first.
+- Tested on AWS provider 5.100 and 6.0, with `terraform test` and a mocked provider, so the tests need no credentials. It has been planned against a live account.
 - The bundled conformance pack templates are AWS's published samples under the Apache License 2.0. See `packs/README.md`.
 - Cost allocation tags appear in Cost Explorer only after the management account activates them, and AWS does not backfill. [terraform-aws-organization-baseline](https://github.com/fizz/terraform-aws-organization-baseline) does the activation.
 - The module changes account-wide settings: the S3 public access block, EBS default encryption and the password policy. Apply it to accounts where that is what you want.
