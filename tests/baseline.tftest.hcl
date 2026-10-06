@@ -172,3 +172,12 @@ run "short_retention_is_refused" {
 
   expect_failures = [var.audit_retention_days]
 }
+
+run "three_keys_with_different_readers" {
+  command = plan
+
+  assert {
+    condition     = length(toset([aws_kms_key.audit.description, aws_kms_key.alerts.description, aws_kms_key.backup.description])) == 3
+    error_message = "The audit, alerts and backup keys are separate keys."
+  }
+}

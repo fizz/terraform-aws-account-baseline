@@ -7,7 +7,7 @@
 
 resource "aws_sns_topic" "alerts" {
   name              = "${local.prefix}-alerts"
-  kms_master_key_id = aws_kms_key.audit.arn
+  kms_master_key_id = aws_kms_key.alerts.arn
 }
 
 resource "aws_sns_topic_policy" "alerts" {

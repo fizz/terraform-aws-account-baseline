@@ -5,7 +5,7 @@ resource "aws_backup_vault" "main" {
   count = var.enable_backup ? 1 : 0
 
   name        = "${local.prefix}-vault"
-  kms_key_arn = aws_kms_key.audit.arn
+  kms_key_arn = aws_kms_key.backup.arn
 }
 
 resource "aws_iam_role" "backup" {
@@ -36,7 +36,7 @@ resource "aws_iam_role_policy_attachment" "backup" {
 resource "aws_iam_role_policy" "backup_key" {
   count = var.enable_backup ? 1 : 0
 
-  name = "use-audit-key"
+  name = "use-backup-key"
   role = aws_iam_role.backup[0].id
 
   policy = jsonencode({
@@ -45,12 +45,12 @@ resource "aws_iam_role_policy" "backup_key" {
       {
         Effect   = "Allow"
         Action   = ["kms:Decrypt", "kms:GenerateDataKey", "kms:DescribeKey", "kms:ReEncrypt*"]
-        Resource = aws_kms_key.audit.arn
+        Resource = aws_kms_key.backup.arn
       },
       {
         Effect    = "Allow"
         Action    = "kms:CreateGrant"
-        Resource  = aws_kms_key.audit.arn
+        Resource  = aws_kms_key.backup.arn
         Condition = { Bool = { "kms:GrantIsForAWSResource" = "true" } }
       },
     ]

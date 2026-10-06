@@ -25,6 +25,7 @@ That creates everything in the table below. Each alert address gets an email fro
 | Area | What you get |
 |---|---|
 | Audit | A multi-region CloudTrail trail with log file validation, in an Object Lock bucket, delivered to CloudWatch Logs |
+| Keys | Three customer-managed keys: audit, alerts and backup |
 | Configuration | A Config recorder, and the CIS AWS Foundations v1.4 Level 2 and HIPAA Security conformance packs |
 | Detection | GuardDuty, Security Hub with three standards, IAM Access Analyzer, Inspector |
 | Account settings | S3 public access blocked account-wide, EBS encryption by default, a password policy |
@@ -42,9 +43,22 @@ That creates everything in the table below. Each alert address gets an email fro
 
 **A recorder that exists is not a recorder that records.** Config shows as set up and captures nothing until the recorder status is enabled. The module sets it, and Security Hub waits on it, because most Security Hub controls read from Config.
 
+**Three keys, because they have different readers.** One key would let anyone who can restore a backup also decrypt the audit trail. The trail and Config use the audit key, the alerts topic has its own, and backups have their own. A customer-managed key also makes every `Decrypt` a CloudTrail event that names the caller. With SSE-S3, permission to read an object is all the permission there is.
+
 **The CloudTrail alarms are the seven that stay quiet.** The CIS benchmark also asks for alarms on IAM, security group, route table and gateway changes. Every Terraform apply trips those, so they alarm on each deploy until everyone ignores the topic. They are left out on purpose.
 
 **Management events alone answer half the question.** They say who changed the infrastructure. Data events on the buckets you name in `data_event_bucket_arns` say who read a document.
+
+## Default VPCs
+
+A new account has a default VPC in every region, with public subnets, an internet gateway and a permissive default security group that nothing you build will use. Security Hub flags them. They exist before any Terraform runs, so removing them is a script:
+
+```sh
+AWS_PROFILE=my-profile scripts/delete-default-vpcs.sh            # list them
+AWS_PROFILE=my-profile scripts/delete-default-vpcs.sh --delete   # delete them
+```
+
+It skips a default VPC that still holds network interfaces and says which.
 
 ## Costs
 
