@@ -1,5 +1,5 @@
 variable "name" {
-  description = "Prefix for every resource name, for example acme-prod. Bucket names also carry the account ID, so the prefix needs only to be unique within the account."
+  description = "Prefix for every resource name, for example acme-prod. Bucket names also include the account ID, so the prefix needs only to be unique within the account."
   type        = string
 }
 
