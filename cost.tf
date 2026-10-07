@@ -42,16 +42,30 @@ resource "aws_budgets_budget" "monthly" {
   depends_on = [aws_sns_topic_policy.alerts]
 }
 
+# AWS allows one SERVICE-dimension monitor per account and creates Default-Services-Monitor
+# itself in new accounts, so creating a second fails with "Limit exceeded". Pass that
+# monitor's ARN as anomaly_monitor_arn to subscribe to it instead.
 resource "aws_ce_anomaly_monitor" "services" {
+  count = var.anomaly_monitor_arn == null ? 1 : 0
+
   name              = "${local.prefix}-services"
   monitor_type      = "DIMENSIONAL"
   monitor_dimension = "SERVICE"
 }
 
+moved {
+  from = aws_ce_anomaly_monitor.services
+  to   = aws_ce_anomaly_monitor.services[0]
+}
+
+locals {
+  anomaly_monitor_arn = var.anomaly_monitor_arn != null ? var.anomaly_monitor_arn : aws_ce_anomaly_monitor.services[0].arn
+}
+
 resource "aws_ce_anomaly_subscription" "alerts" {
   name             = "${local.prefix}-anomalies"
   frequency        = "IMMEDIATE"
-  monitor_arn_list = [aws_ce_anomaly_monitor.services.arn]
+  monitor_arn_list = [local.anomaly_monitor_arn]
 
   subscriber {
     type    = "SNS"

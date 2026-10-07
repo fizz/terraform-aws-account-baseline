@@ -137,6 +137,33 @@ run "seven_quiet_alarms" {
   }
 }
 
+run "anomaly_monitor_created_by_default" {
+  command = plan
+
+  assert {
+    condition     = length(aws_ce_anomaly_monitor.services) == 1
+    error_message = "With no ARN given, the module creates the monitor."
+  }
+}
+
+run "existing_anomaly_monitor_is_reused" {
+  command = plan
+
+  variables {
+    anomaly_monitor_arn = "arn:aws:ce::111122223333:anomalymonitor/00000000-0000-0000-0000-000000000000"
+  }
+
+  assert {
+    condition     = length(aws_ce_anomaly_monitor.services) == 0
+    error_message = "A given ARN means no second monitor, which AWS would reject."
+  }
+
+  assert {
+    condition     = aws_ce_anomaly_subscription.alerts.monitor_arn_list == tolist(["arn:aws:ce::111122223333:anomalymonitor/00000000-0000-0000-0000-000000000000"])
+    error_message = "The subscription uses the given monitor."
+  }
+}
+
 run "no_budget_when_none_given" {
   command = plan
 

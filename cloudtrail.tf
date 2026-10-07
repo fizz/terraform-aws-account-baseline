@@ -261,7 +261,7 @@ resource "aws_cloudtrail" "main" {
 
   # Tells the alerts topic when a new log file lands, which is how a subscriber
   # notices that delivery has stopped.
-  sns_topic_name = aws_sns_topic.alerts.arn
+  sns_topic_name = aws_sns_topic.alerts.name
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail.arn}:*"
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_logs.arn

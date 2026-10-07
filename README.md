@@ -73,10 +73,11 @@ Config, GuardDuty, Security Hub and Inspector bill by usage, and the conformance
 | `monthly_budget_usd` | `null` | No budget when null. |
 | `additional_conformance_packs` | `{}` | Name to template body. Config accepts 51,200 bytes inline. |
 | `enable_backup` | `true` | Vault, plan and selection. |
+| `anomaly_monitor_arn` | `null` | A new account already has `Default-Services-Monitor`, and AWS allows one. Pass its ARN (`aws ce get-anomaly-monitors`) and the module subscribes to it. Null creates a monitor. |
 
 ## Notes
 
-- Tested on AWS provider 5.100 and 6.0, with `terraform test` and a mocked provider, so the tests need no credentials. It has been planned against a live account.
+- Tested on AWS provider 5.100 and 6.0, with `terraform test` and a mocked provider, so the tests need no credentials. It has been planned against a live account and applied to a new one.
 - The bundled conformance pack templates are AWS's published samples under the Apache License 2.0. See `packs/README.md`.
 - Cost allocation tags appear in Cost Explorer only after the management account activates them, and AWS does not backfill. [terraform-aws-organization-baseline](https://github.com/fizz/terraform-aws-organization-baseline) does the activation.
 - The module changes account-wide settings: the S3 public access block, EBS default encryption and the password policy. Apply it to accounts where that is what you want.

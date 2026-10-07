@@ -61,6 +61,12 @@ variable "anomaly_threshold_usd" {
   default     = 20
 }
 
+variable "anomaly_monitor_arn" {
+  description = "ARN of an existing service-level cost anomaly monitor to subscribe to. AWS creates Default-Services-Monitor in new accounts and allows one monitor of this kind, so a fresh account sets this to that monitor's ARN. Null creates the monitor."
+  type        = string
+  default     = null
+}
+
 variable "enable_cis_pack" {
   description = "Deploy the CIS AWS Foundations v1.4 Level 2 conformance pack."
   type        = bool
