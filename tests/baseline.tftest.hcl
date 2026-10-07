@@ -208,3 +208,25 @@ run "three_keys_with_different_readers" {
     error_message = "The audit, alerts and backup keys are separate keys."
   }
 }
+
+run "log_delivery_notices_are_off_by_default" {
+  command = plan
+
+  assert {
+    condition     = aws_cloudtrail.main.sns_topic_name == null
+    error_message = "CloudTrail must not publish a message per delivered log file unless asked to."
+  }
+}
+
+run "log_delivery_notices_can_be_enabled" {
+  command = plan
+
+  variables {
+    notify_on_log_delivery = true
+  }
+
+  assert {
+    condition     = aws_cloudtrail.main.sns_topic_name == "test-alerts"
+    error_message = "notify_on_log_delivery = true must publish to the alerts topic."
+  }
+}

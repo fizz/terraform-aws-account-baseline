@@ -74,6 +74,7 @@ Config, GuardDuty, Security Hub and Inspector bill by usage, and the conformance
 | `additional_conformance_packs` | `{}` | Name to template body. Config accepts 51,200 bytes inline. |
 | `enable_backup` | `true` | Vault, plan and selection. |
 | `anomaly_monitor_arn` | `null` | A new account already has `Default-Services-Monitor`, and AWS allows one. Pass its ARN (`aws ce get-anomaly-monitors`) and the module subscribes to it. Null creates a monitor. |
+| `notify_on_log_delivery` | `false` | Publish to the alerts topic each time CloudTrail delivers a log file, about every five minutes. Off because it floods every subscriber; turn it on only if something consumes the messages to detect stalled delivery. |
 
 ## Notes
 

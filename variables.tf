@@ -102,3 +102,9 @@ variable "backup_retention_days" {
   type        = number
   default     = 35
 }
+
+variable "notify_on_log_delivery" {
+  description = "Publish to the alerts topic each time CloudTrail delivers a log file (about every five minutes). Useful only if something consumes the messages to detect stalled delivery; otherwise it fills subscribers' inboxes."
+  type        = bool
+  default     = false
+}

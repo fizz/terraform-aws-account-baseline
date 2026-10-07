@@ -259,9 +259,10 @@ resource "aws_cloudtrail" "main" {
 
   kms_key_id = aws_kms_key.audit.arn
 
-  # Tells the alerts topic when a new log file lands, which is how a subscriber
-  # notices that delivery has stopped.
-  sns_topic_name = aws_sns_topic.alerts.name
+  # One message per delivered log file, about every five minutes. Off by default
+  # because it floods every subscriber of the alerts topic; the log-group alarms
+  # carry the real signals.
+  sns_topic_name = var.notify_on_log_delivery ? aws_sns_topic.alerts.name : null
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail.arn}:*"
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_logs.arn
