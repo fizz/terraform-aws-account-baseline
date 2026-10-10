@@ -26,10 +26,19 @@ resource "aws_securityhub_account" "main" {
   depends_on = [aws_config_configuration_recorder_status.main]
 }
 
+# A standard can take several minutes to reach READY on a new hub. The provider's
+# default wait is shorter, and a timeout taints a subscription that succeeded, so
+# the next apply turns it off and on again. Each subscription waits 15 minutes.
+
 # The broadest signal, and the one whose findings are mostly actionable.
 resource "aws_securityhub_standards_subscription" "fsbp" {
   standards_arn = "arn:${local.partition}:securityhub:${local.region}::standards/aws-foundational-security-best-practices/v/1.0.0"
   depends_on    = [aws_securityhub_account.main]
+
+  timeouts {
+    create = "15m"
+    delete = "15m"
+  }
 }
 
 # Security Hub has no NIST 800-171 standard. 800-171 derives its controls from
@@ -37,11 +46,21 @@ resource "aws_securityhub_standards_subscription" "fsbp" {
 resource "aws_securityhub_standards_subscription" "nist_800_53" {
   standards_arn = "arn:${local.partition}:securityhub:${local.region}::standards/nist-800-53/v/5.0.0"
   depends_on    = [aws_securityhub_account.main]
+
+  timeouts {
+    create = "15m"
+    delete = "15m"
+  }
 }
 
 resource "aws_securityhub_standards_subscription" "cis" {
   standards_arn = "arn:${local.partition}:securityhub:${local.region}::standards/cis-aws-foundations-benchmark/v/1.4.0"
   depends_on    = [aws_securityhub_account.main]
+
+  timeouts {
+    create = "15m"
+    delete = "15m"
+  }
 }
 
 resource "aws_accessanalyzer_analyzer" "main" {
